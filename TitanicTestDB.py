@@ -4,32 +4,49 @@ filepath = "SmallTitanic"
 DBsize = 20
 rec_size = 72
 
-sample= DB()
+Titanic = DB()
 #sample.creatSB(filepath)
 while True:
     print('Database Menu')
     print('--------------')
-    print('1. ReadCSV')
-    print('2. writeRecord')
-    print('3. CreateDB')
-    print('4. Open')
-    print('5. readRecord')
+    print('1. Create new DB')
+    print('2. Open DB')
+    print('3. Close DB')
+    print('4. Display Record')
+    print('5. Update Record')
+    print('6. Create Report')
+    print('7. Add Record')
+    print('8. Delete Record')
+    print('9. Quit')
     print('\n')
     key = input('Please select an option 1-5: ').strip()
     if key == '1':
-        #ReadCSV
+        #Create new DB
         break
     elif key == '2':
-        #Wrtite Record
+        #Open DB
         break
     elif key == '3':
-        #CreateDB
+        #Close DB
         break
     elif key == '4':
-        #Open
+        #Display Record
         break
     elif key == '5':
-        #read record
+        #Update Record
+        break
+    elif key == '6':
+        #Create Report
+        break
+    elif key == '7':
+        #Add Record
+        break
+    elif key == '8':
+        #Delete Record
+        break
+    elif key == '9':
+        #Quit
+        Titanic.CloseDB()
         break
     else:
         print('wrong input please try again')
