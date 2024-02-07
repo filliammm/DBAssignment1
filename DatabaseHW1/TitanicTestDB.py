@@ -12,7 +12,7 @@ while True:
     print('1. Create new DB')
     print('2. Open DB')
     print('3. Close DB')
-    print('4. Display Record')
+    print('4. Read Record')
     print('5. Update Record')
     print('6. Create Report')
     print('7. Add Record')
@@ -27,6 +27,7 @@ while True:
     elif key == '2':
         #Open DB
         Titanic.open('SmallTitanic')
+        print("The database has been opened\n")
         continue
     elif key == '3':
         #Close DB
@@ -34,18 +35,24 @@ while True:
         continue
     elif key == '4':
         #Display Record
+        
         continue
     elif key == '5':
         #Update Record
+        
         continue
     elif key == '6':
         #Create Report
+        
         continue
     elif key == '7':
         #Add Record
+        
         continue
     elif key == '8':
         #Delete Record
+        cin = input("Please indicate the ID of the record you wish to remove: ")
+        Titanic.deleteRecord(cin)
         continue
     elif key == '9':
         #Quit

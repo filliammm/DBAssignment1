@@ -12,7 +12,7 @@ class DB:
         self.Fname_size= 30
         self.Lname_size= 30
         self.Age_size= 10
-        self.Tnum_size= 12
+        self.Tnum_size= 20
         self.Fare_size = 10
         self.Date_size = 20
 
@@ -50,9 +50,9 @@ class DB:
             filestream.write("\n")
 
         with open(config_filename, "w") as config_file:
-            config_file.write("Num of Records: {}\n".format(len(data_list)))
+            config_file.write("20")
             self.rec_size = sum([self.Id_size, self.Fname_size, self.Lname_size, self.Age_size, self.Tnum_size, self.Fare_size, self.Date_size])
-            config_file.write("Record size: {}\n".format(self.rec_size))
+            config_file.write("72")
 
         with open(text_filename, "w") as outfile:
             for dict in data_list:
@@ -86,9 +86,9 @@ class DB:
             fname = line[10:40]
             lname = line[40:700]
             age = line[70:80]
-            ticketnum = line[80:92]
-            fare = line[92:102]
-            date = line[102:122]
+            ticketnum = line[80:100]
+            fare = line[100:110]
+            date = line[110:130]
             self.record = dict({"ID": id, "fname": fname, "lname": lname, "age": age, "ticketnum": ticketnum, "fare": fare, "date": date})
     
     #open record function
@@ -98,33 +98,34 @@ class DB:
         data_filename = db_name + ".data"
         try:
             with open(config_filename, 'r') as config_file:
-                self.numRecords, self.recordSize = map(int, config_file.read().splitlines())
+                self.num_record = config_file.read()
+                self.recordSize = config_file.read()
 
-            self.dataFileptr = open(data_filename, 'r+')
+            self.filestream = open(data_filename, 'r+')
             return True
         except FileNotFoundError:
             return False
     #is open record method
     def isOpen(self):
         # Check if the database is open
-        return self.dataFileptr is not None
+        return self.filestream is not None
     
     #close record method
     def close(self):
         # Implement close method to close data file
-        if self.dataFileptr is not None:
-            self.dataFileptr.close()
-            self.numRecords = 0
+        if self.filestream is not None:
+            self.filestream.close()
+            self.num_record = 0
             self.recordSize = 0
-            self.dataFileptr = None
+            self.filestream = None
      
     #write Record method           
     def writeRecord(self, recordNum, passengerId, fname, lname, age, ticketNum, fare, date):
         # Implement writeRecord method to write a record to the data file
-        if self.dataFileptr is not None:
-            if 0 <= recordNum < self.numRecords:
+        if self.filestream is not None:
+            if 0 <= recordNum < self.num_record:
                 # Move the file pointer to the beginning of the record
-                self.dataFileptr.seek(recordNum * self.recordSize)
+                self.filestream.seek(recordNum * self.recordSize)
 
                 # Format the record data (assuming a fixed format)
                 record_data = f"{passengerId},{fname},{lname},{age},{ticketNum},{fare},{date}"
@@ -133,7 +134,7 @@ class DB:
                 record_data = record_data.ljust(self.recordSize, '\0')
 
                 # Write the record to the file
-                self.dataFileptr.write(record_data)
+                self.filestream.write(record_data)
 
                 print(f"Record {recordNum} updated successfully.")
                 return 1  # 1 indicates successful update
