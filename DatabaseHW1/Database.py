@@ -18,46 +18,45 @@ class DB:
 
 
     #create database
-    def createDB(self,filename):
-        #Generate file names
+    def createDB(self, filename):
+    # Generate file names
         csv_filename = filename + ".csv"
         text_filename = filename + ".data"
         config_filename = filename + ".config"
 
         # Read the CSV file and write into data files
         with open(csv_filename, "r") as csv_file:
-            data_list = list(csv.DictReader(csv_file,fieldnames=('ID','fname','lname','age','ticketnum','fare','date')))
+            data_list = list(csv.DictReader(csv_file, fieldnames=('ID', 'fname', 'lname', 'age', 'ticketnum', 'fare', 'date')))
 
-		# Formatting files with spaces so each field is fixed length, i.e. ID field has a fixed length of 10
+        # Formatting files with spaces so each field is fixed length, i.e., ID field has a fixed length of 10
         def writeDB(filestream, dict):
-            filestream.write("{:{width}.{width}}".format(dict["ID"],width=self.Id_size))
-            filestream.write("{:{width}.{width}}".format(dict["fname"],width=self.Fname_size))
-            filestream.write("{:{width}.{width}}".format(dict["lname"],width=self.Lname_size))
-            filestream.write("{:{width}.{width}}".format(dict["age"],width=self.Age_size))
-            filestream.write("{:{width}.{width}}".format(dict["ticketnum"],width=self.Tnum_size))
-            filestream.write("{:{width}.{width}}".format(dict["fare"],width=self.Fare_size))
-            filestream.write("{:{width}.{width}}".format(dict["date"],width=self.Date_size))
+            filestream.write("{:{width}.{width}}".format(dict["ID"], width=self.Id_size))
+            filestream.write("{:{width}.{width}}".format(dict["fname"], width=self.Fname_size))
+            filestream.write("{:{width}.{width}}".format(dict["lname"], width=self.Lname_size))
+            filestream.write("{:{width}.{width}}".format(dict["age"], width=self.Age_size))
+            filestream.write("{:{width}.{width}}".format(dict["ticketnum"], width=self.Tnum_size))
+            filestream.write("{:{width}.{width}}".format(dict["fare"], width=self.Fare_size))
+            filestream.write("{:{width}.{width}}".format(dict["date"], width=self.Date_size))
             filestream.write("\n")
 
-            #write an empty records
-            filestream.write("{:{width}.{width}}".format('_empty_',width=self.Id_size))
-            filestream.write("{:{width}.{width}}".format(' ',width=self.Fname_size))
-            filestream.write("{:{width}.{width}}".format(' ',width=self.Lname_size))
-            filestream.write("{:{width}.{width}}".format(' ',width=self.Age_size))
-            filestream.write("{:{width}.{width}}".format(' ',width=self.Tnum_size))
-            filestream.write("{:{width}.{width}}".format(' ',width=self.Fare_size))
-            filestream.write("{:{width}.{width}}".format(' ',width=self.Date_size))
+            # write an empty record
+            filestream.write("{:{width}.{width}}".format('_empty_', width=self.Id_size))
+            filestream.write("{:{width}.{width}}".format(' ', width=self.Fname_size))
+            filestream.write("{:{width}.{width}}".format(' ', width=self.Lname_size))
+            filestream.write("{:{width}.{width}}".format(' ', width=self.Age_size))
+            filestream.write("{:{width}.{width}}".format(' ', width=self.Tnum_size))
+            filestream.write("{:{width}.{width}}".format(' ', width=self.Fare_size))
+            filestream.write("{:{width}.{width}}".format(' ', width=self.Date_size))
             filestream.write("\n")
-
 
         with open(config_filename, "w") as config_file:
-            config_file.write("Num of Records: {}\n".format(len(text_filename)))
-            self.rec_size = self.Id_size + self.Fname_size + self.Lname_size + self.Age_size + self.Tnum_size + self.Fare_size + self.Date_size
+            config_file.write("Num of Records: {}\n".format(len(data_list)))
+            self.rec_size = sum([self.Id_size, self.Fname_size, self.Lname_size, self.Age_size, self.Tnum_size, self.Fare_size, self.Date_size])
             config_file.write("Record size: {}\n".format(self.rec_size))
-        
-        with open(text_filename,"w") as outfile:
+
+        with open(text_filename, "w") as outfile:
             for dict in data_list:
-                writeDB(outfile,dict)
+                writeDB(outfile, dict)
 
     #read the database
     def readDB(self, filename, DBsize, rec_size):
@@ -90,7 +89,7 @@ class DB:
             ticketnum = line[80:92]
             fare = line[92:102]
             date = line[102:122]
-            self.record = dict({"ID":id,"fname":fname,"lname":lname,"age":age,"ticketnum":ticketnum,fare:"fare",date:"date"})
+            self.record = dict({"ID": id, "fname": fname, "lname": lname, "age": age, "ticketnum": ticketnum, "fare": fare, "date": date})
     
     #open record function
     def open(self, db_name):
