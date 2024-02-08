@@ -37,6 +37,12 @@ while True:
         continue
     elif key == '4':
         #Read Record
+        recNum = input("Please input the Record number you wish to Read: ")
+        try:
+            recordNum = int(recNum)
+            Titanic.getRecord(recordNum)
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
         
         continue
     elif key == '5':

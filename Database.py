@@ -71,30 +71,31 @@ class DB:
 
     #read record method
     def getRecord(self, recordNum):
-
         self.flag = False
         id = fname = lname = age = ticketnum = fare = date = "None"
 
-        if recordNum >=0 and recordNum < self.rec_size:
-            self.text_filename.seek(0,0)
-            self.text_filename.seek(int(recordNum)*self.rec_size)
-            line= self.text_filename.readline().rstrip('\n')
+        if recordNum >= 0 and recordNum < self.rec_size:
+            # Use the correct attribute name here
+            self.filestream.seek(0, 0)
+            self.filestream.seek(recordNum * self.rec_size)
+            line = self.filestream.readline().rstrip('\n')
             self.flag = True
-        
+
         if self.flag:
             id = line[0:10]
             fname = line[10:40]
-            lname = line[40:700]
+            lname = line[40:70]
             age = line[70:80]
             ticketnum = line[80:100]
             fare = line[100:110]
             date = line[110:130]
             self.record = dict({"ID": id, "fname": fname, "lname": lname, "age": age, "ticketnum": ticketnum, "fare": fare, "date": date})
             
-            return (1,(self.record)) #successful read
+
+            return 1  # successful read
         else:
             print("Invalid record number or the database has not been open")
-            return -1 #invalid record num or database not open
+            return -1  # invalid record num or database not open
     
     #open record function
     def open(self, db_name):
@@ -103,7 +104,7 @@ class DB:
         data_filename = db_name + ".data"
         try:
             with open(config_filename, 'r') as config_file:
-                self.num_record = config_file.read()
+                self.num_record = config_file.readline()
                 self.recordSize = config_file.read()
 
             self.filestream = open(data_filename, 'r+')
