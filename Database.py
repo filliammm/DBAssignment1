@@ -75,9 +75,9 @@ class DB:
         self.flag = False
         id = fname = lname = age = ticketnum = fare = date = "None"
 
-        if recordNum >=0 and recordNum < self.record_size:
+        if recordNum >=0 and recordNum < self.rec_size:
             self.text_filename.seek(0,0)
-            self.text_filename.seek(recordNum*self.rec_size)
+            self.text_filename.seek(int(recordNum)*self.rec_size)
             line= self.text_filename.readline().rstrip('\n')
             self.flag = True
         
@@ -90,6 +90,11 @@ class DB:
             fare = line[100:110]
             date = line[110:130]
             self.record = dict({"ID": id, "fname": fname, "lname": lname, "age": age, "ticketnum": ticketnum, "fare": fare, "date": date})
+            
+            return (1,(self.record)) #successful read
+        else:
+            print("Invalid record number or the database has not been open")
+            return -1 #invalid record num or database not open
     
     #open record function
     def open(self, db_name):
@@ -118,38 +123,6 @@ class DB:
             self.num_record = 0
             self.recordSize = 0
             self.filestream = None
-    
-    #display record method        
-    def readRecord(self, recordNum, passengerId, fname, lname, age, ticketNum, fare, date):
-        # Implement readRecord method to read a record from the data file
-        if self.isOpen():
-            if 0 <= recordNum < self.num_record:
-                # Move the file pointer to the beginning of recordNum
-                self.filestream.seek(recordNum * self.recordSize)
-                
-                # Read the key from the record
-                key = self.filestream.read(self.Id_size).strip()
-
-                if key == '_empty_':
-                    # Empty record
-                    return 0
-                else:
-                    # Non-empty record, read the rest of the fields
-                    passengerId = key
-                    fname = self.filestream.read(self.Fname_size).strip()
-                    lname = self.filestream.read(self.Lname_size).strip()
-                    age = self.filestream.read(self.Age_size).strip()
-                    ticketNum = self.filestream.read(self.Tnum_size).strip()
-                    fare = self.filestream.read(self.Fare_size).strip()
-                    date = self.filestream.read(self.Date_size).strip()
-
-                    return 1  # Successful read
-            else:
-                print("Invalid record number.")
-                return -1  # Invalid record number
-        else:
-            print("Database is not open.")
-            return -1  # Database is not open
      
     #write Record method           
     def writeRecord(self, recordNum, passengerId, fname, lname, age, ticketNum, fare, date):
