@@ -83,8 +83,6 @@ class DB:
         else:
             return -1, None
 
-
-
      #Binary Search by record id
     def binarySearch(self, input_ID):
         low = 0
@@ -93,11 +91,12 @@ class DB:
         recordNum = None  # Initialize the insertion point
 
         while not found and high >= low:
+            print("Search range:", low, "-", high)  # Debugging output
             middle = (low + high) // 2
             self.getRecord(middle)
             mid_id = self.record["ID"]
 
-            if mid_id.strip() == '_empty_':
+            if mid_id.strip() == 'empty':
                 non_empty_record = self.findNearestNonEmpty(middle, low, high)
                 if non_empty_record == -1:
                     # If no non-empty record found, set recordNum for potential insertion
@@ -113,7 +112,7 @@ class DB:
                 else:
                     recordNum = middle + 1
 
-            if mid_id != '_empty_':
+            if mid_id != 'empty':
                 try:
                     if int(mid_id) == int(input_ID):
                         found = True
@@ -127,9 +126,9 @@ class DB:
                     high = middle - 1
 
         if not found and recordNum is None:
-            # Set recordNum to high + 1 if no suitable spot is found
-            recordNum = high
+            # If not found, return a tuple indicating absence of ID
             print("Could not find record with ID", input_ID)
+            return False, None
 
         return found, recordNum
 
@@ -204,7 +203,7 @@ class DB:
                     record_data = ''
                 else:
                     # Format the record data (assuming a fixed format)
-                    record_data = f"{passengerId},{fname},{lname},{age},{ticketNum},{fare},{date}"
+                    record_data = f"{passengerId} {fname} {lname} {age} {ticketNum} {fare} {date}"
 
                 # Pad the record data if needed to match recordSize
                 record_data = record_data.ljust(self.record_size, ' ')
@@ -254,16 +253,16 @@ class DB:
 
                     # Get the new fare value from the user with input validation
                     while True:
-                        new_fare = input("Enter new fare: ")
-                        if new_fare.isdigit():  # Add more validation as needed
+                        new_age = input("Enter new age: ")
+                        if new_age.isdigit():  # Add more validation as needed
                             break
                         else:
-                            print("Invalid input. Please enter a valid fare value.")
+                            print("Invalid input. Please enter a valid age value.")
 
                     # Update the record with the new fare value
                     success = self.writeRecord(recordNum, passengerId, existing_record["first_name"],
-                                                existing_record["last_name"], existing_record["age"],
-                                                existing_record["ticket_num"], new_fare,
+                                                existing_record["last_name"], new_age,
+                                                existing_record["ticket_num"], existing_record["fare"],
                                                 existing_record["date_of_purchase"])
 
                     if success == 1:
