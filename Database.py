@@ -1,6 +1,7 @@
-#-----------------------------
-# HW1 Part 1 solution by Ananya Vangoor and Susan Gauch
-#-----------------------------
+#### Coders: Logan Galowitsch and William Finck 
+#### Goal: create functioning Database
+#### Date: 2/18/2024
+#### Code below uses sample code from Susan Gauch
 
 import csv
 import os.path
@@ -96,7 +97,7 @@ class DB:
             self.getRecord(middle)
             mid_id = self.record["ID"]
 
-            if mid_id.strip() == 'empty':
+            if int(mid_id) == 0:
                 non_empty_record = self.findNearestNonEmpty(middle, low, high)
                 if non_empty_record == -1:
                     # If no non-empty record found, set recordNum for potential insertion
@@ -251,19 +252,44 @@ class DB:
                     print("Existing record:")
                     self.displayRecord(passengerId)
 
-                    # Get the new fare value from the user with input validation
+                    # Prompt the user for which field to update
                     while True:
-                        new_age = input("Enter new age: ")
-                        if new_age.isdigit():  # Add more validation as needed
+                        print("Which field would you like to update?")
+                        print("1. First Name")
+                        print("2. Last Name")
+                        print("3. Age")
+                        print("4. Ticket Number")
+                        print("5. Fare")
+                        print("6. Date of Purchase")
+                        choice = input("Enter your choice (1-6): ")
+
+                        if choice.isdigit() and 1 <= int(choice) <= 6:
                             break
                         else:
-                            print("Invalid input. Please enter a valid age value.")
+                            print("Invalid input. Please enter a number between 1 and 6.")
 
-                    # Update the record with the new fare value
+                    # Get the new value for the chosen field
+                    new_value = input("Enter the new value: ")
+
+                    # Determine which field to update and update the record accordingly
+                    if int(choice) == 1:
+                        existing_record["first_name"] = new_value
+                    elif int(choice) == 2:
+                        existing_record["last_name"] = new_value
+                    elif int(choice) == 3:
+                        existing_record["age"] = new_value
+                    elif int(choice) == 4:
+                        existing_record["ticket_num"] = new_value
+                    elif int(choice) == 5:
+                        existing_record["fare"] = new_value
+                    elif int(choice) == 6:
+                        existing_record["date_of_purchase"] = new_value
+
+                    # Update the record in the database
                     success = self.writeRecord(recordNum, passengerId, existing_record["first_name"],
-                                                existing_record["last_name"], new_age,
-                                                existing_record["ticket_num"], existing_record["fare"],
-                                                existing_record["date_of_purchase"])
+                                            existing_record["last_name"], existing_record["age"],
+                                            existing_record["ticket_num"], existing_record["fare"],
+                                            existing_record["date_of_purchase"])
 
                     if success == 1:
                         print(f"Record with Passenger ID {passengerId} updated successfully.")
@@ -278,34 +304,53 @@ class DB:
 
 
 
+
+
     #add Record method
-    def addRecord(self, passengerId, fname, lname, age, ticketNum, fare, date):
-        # Implement addRecord method
-        if self.isOpen():
-            # Search for an empty record
-            recordNum, _, _, _, _, _, _, _ = self.binarySearch('\0')
-            if recordNum != -1:
-                # Call writeRecord to add the new record to an empty slot
-                return self.writeRecord(recordNum, passengerId, fname, lname, age, ticketNum, fare, date)
-            else:
-                print("No empty record found. Trying to extend the file.")
-                # You can implement the logic to extend the file and add the new record here
-                # ...
+    def addRecord(self, passenger_id, first_name, last_name, age, ticket_num, fare, date):
+        found, record_num = self.binarySearch(passenger_id)
+
+        if found:
+            print("Record with Passenger ID", passenger_id, "already exists.")
+            return False
+
+        if record_num is None:
+            # No records found, add the new record at the end of the file
+            with open(self.file_name, "a") as f:
+                record_string = f"{passenger_id:<3}{first_name:<15}{last_name:<15}{age:<4}{ticket_num:<16}{fare:<6}{date:<11}\n"
+                f.write(record_string)
+                print("Record with Passenger ID", passenger_id, "added successfully.")
+            return True
+
+        # Insert the new record at the appropriate position
+        self.writeRecord(record_num, passenger_id, first_name, last_name, age, ticket_num, fare, date)
+        print("Record with Passenger ID", passenger_id, "added successfully.")
+        return True
+
 
 
     #delete Record method
-    def deleteRecord(self, passengerId):
-        # Implement deleteRecord method
-        if self.isOpen():
-            recordNum, _, _, _, _, _, _, _ = self.binarySearch(passengerId)
-            if recordNum != -1:
-                # Call writeRecord to delete the record by overwriting with default values
-                return self.writeRecord(recordNum, '\0', '', '', '', '', '', '')
-            else:
-                print(f"Record with Passenger ID {passengerId} not found.")
-                return False
-    
-    
+    def deleteRecord(self, passenger_id):
+        found, recordNum = self.binarySearch(passenger_id)
+
+        if not found:
+            print("Record with Passenger ID", passenger_id, "not found.")
+            return False
+
+        self.getRecord(recordNum)
+        self.record["ID"] = "empty"
+        self.record["first_name"] = "empty"
+        self.record["last_name"] = "empty"
+        self.record["age"] = "empty"
+        self.record["ticket_num"] = "empty"
+        self.record["fare"] = "empty"
+        self.record["date_of_purchase"] = "empty"
+        self.writeRecord(recordNum, self.record["ID"], self.record["first_name"], self.record["last_name"], self.record["age"], self.record["ticket_num"], self.record["fare"], self.record["date_of_purchase"])
+
+        print("Record with Passenger ID", passenger_id, "deleted successfully.")
+        return True
+
+
 
     #close the database
     def CloseDB(self):

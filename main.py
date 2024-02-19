@@ -1,3 +1,8 @@
+#### Coders: Logan Galowitsch and William Finck 
+#### Goal: create menu for interacting with database
+#### Date: 2/18/2024
+#### Code below uses sample code from Susan Gauch
+
 import os.path
 from Database import DB
 
@@ -18,8 +23,8 @@ def menu():
         5) Display record
         6) Update record
         7) Create report
-        8) Add record
-        9) Delete record
+        8) Delete record
+        9) Add record
         10) Quit
 
         Please enter your choice: """)
@@ -64,10 +69,18 @@ def menu():
            passengerId = input("Enter the Passenger ID to update the record: ")
            Titanic.updateRecord(passengerId)
         elif choice == 7:
-           print("Create Report")
+            if Titanic.isOpen():
+              print("Creating report:")
+              for i in range(10):
+                 Titanic.getRecord(i)
+                 print(f"Record {i}: {Titanic.record}")
+            else:
+               print("Database is closed. Open to use")
+        
         elif choice == 8:
            passengerId = input("Enter the Passenger ID to delete the record: ")
            Titanic.deleteRecord(passengerId)
+           
         elif choice == 9:
            if Titanic.isOpen():
                 # Collect data for the new record
